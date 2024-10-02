@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KWIC Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+        input[type="number"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>KWIC Analyzer</h1>
+
+<h2>选择体系结构类型:</h2>
+<label for="type"></label>
+<select id="type">
+    <option value="0">主程序-子程序结构</option>
+    <option value="1">面向对象结构</option>
+    <option value="2">事件系统结构</option>
+    <option value="3">管道-过滤结构</option>
+</select>
+
+<h2>输入内容:</h2>
+<label for="content"></label>
+<textarea id="content"></textarea>
+
+<button onclick="analyze()">分析</button>
+
+<h2>解析结果:</h2>
+<textarea id="result" readonly></textarea>
+
+<script>
+    async function analyze() {
+        const type = document.getElementById('type').value;
+        const content = document.getElementById('content').value;
+
+        const response = await fetch('http://127.0.0.1:8080/kwic/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type: parseInt(type), content: content }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('result').value = data.data;
+        } else {
+            document.getElementById('result').value = '错误: ' + response.statusText;
+        }
+    }
+</script>
+
+</body>
+</html>
